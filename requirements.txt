@@ -18,6 +18,7 @@ pyclipper
 shapely
 python-bidi
 arabic-reshaper
+dotenv
 
 # ---------------------------
 # ✅ Streamlit
