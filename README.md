@@ -1,2 +1,2 @@
-# streamlit_base_ocr_demo
+# STREAMLIT BASED OCR WEB
 AI Club Side Project - Learning :3
