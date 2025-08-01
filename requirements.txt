@@ -19,6 +19,7 @@ shapely
 python-bidi
 arabic-reshaper
 dotenv
+openai
 
 # ---------------------------
 # ✅ Streamlit
