@@ -43,7 +43,7 @@ if uploaded_file:
     # -------------------------------
     # OCR Text Extraction
     # -------------------------------
-    with st.spinner("🔍 Extracting text with Tesseract OCR..."):
+    with st.spinner("🔍 Extracting text..."):
         text = extract_text(image_np)
 
     with st.expander("📝 Raw OCR Output", expanded=False):

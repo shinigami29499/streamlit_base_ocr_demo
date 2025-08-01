@@ -2,7 +2,7 @@ import json
 import os
 
 import cv2
-import pytesseract
+import easyocr
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -20,26 +20,24 @@ if not BASE_URL or not LLM_KEY:
 # -------------------------------
 # Initialize Tesseract & OpenAI
 # -------------------------------
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
 openai_client = OpenAI(base_url=BASE_URL, api_key=LLM_KEY)
 
-
 # ---------------------------
-# OCR Text Extraction
+# OCR Text Extraction (VietOCR)
 # ---------------------------
 def extract_text(image) -> str:
     """
-    Converts an input image to grayscale and extracts text using Tesseract OCR.
-    Supports Vietnamese and English languages.
+    Converts an input OpenCV image to PIL format and extracts text using VietOCR.
     """
+    # Preprocess: Convert BGR (OpenCV) to RGB then to PIL Image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-    try:
-        text = pytesseract.image_to_string(gray, lang="vie")
-    except pytesseract.TesseractNotFoundError:
-        raise RuntimeError("Tesseract not found. Check your installation and path.")
+    
+    reader = easyocr.Reader(['vi', 'en'], gpu=False)  # Supports Vietnamese and English
+    results = reader.readtext(gray, detail=0)
+    
+    # Join all text fragments into one string
+    text = "\n".join(results)
     return text.strip()
 
 
@@ -76,9 +74,7 @@ def extract_structured_info_with_llm(text: str) -> dict:
             temperature=0.2,
         )
         reply = response.choices[0].message.content.strip()
-
         result = json.loads(reply)
-
         return result
 
     except Exception as e:
